@@ -1,8 +1,21 @@
 <?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * 
+ * @author Serge Rodovnichenko <sergerod@gmail.com>
+ * @version 1.0
  */
 
+class RegionalPickupShipping extends waShipping
+{
+	public function allowedCurrency() {
+		;
+	}
+	
+	public function allowedWeightUnit() {
+		;
+	}
+	
+	protected function calculate() {
+		;
+	}
+}
