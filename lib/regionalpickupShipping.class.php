@@ -1,7 +1,8 @@
 <?php
 
 /**
- * 
+ * Модуль расчета доставки в Пункты выдачи заказов с разбивкой по регионам
+ *
  * @author Serge Rodovnichenko <sergerod@gmail.com>
  * @version 1.0
  */
@@ -100,7 +101,7 @@ class regionalpickupShipping extends waShipping {
 
         return $html;
     }
-    
+
     public function requestedAddressFields()
     {
         return $this->prompt_address ? array() : false;
