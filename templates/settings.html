@@ -1,10 +1,37 @@
-<script type="text/javascript" src="{wa_url}wa-plugins/RegianalPickup/js/angular.min.js"></script>
-<script type="text/javascript" src="{wa_url}wa-plugins/RegianalPickup/js/RegionalPickupSettings.js"></script>
+<div id="regionalpickup-settings">
 
-<div ng-controller="RegionalPickupSettingsController">
-{literal}	
-    <pre>{{}}</pre>
-	
+    <div class="field">
+        <div class="name">{$p->_w('Pick-up point Region')}</div>
+        <div class="value">
+            <select name="{$namespace|escape}[rate_zone][country]">
+                <option value=""></option>
+                {foreach $countires as $country}
+                    <option value="{$country.iso3letter|escape}"{if !empty($values.rate_zone.country) && ($values.rate_zone.country == $country.iso3letter)} selected="selected"{/if}>{$country.name|escape}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="field">
+        <div class="value region">
+            <i class="icon16 loading" style="display:none; margin-left: -23px;"></i>
+            {if empty($regions)}
+                <p class="small">
+                    [`List of pick-up points will be restricted to the selected country.`]
+                </p>
+                <input name="{$namespace|escape}[rate_zone][region]" value="" type="hidden">
+            {else}
+                <select name="{$namespace|escape}[rate_zone][region]">
+                    <option value=""></option>
+                    {foreach $regions as $region}
+                        <option value="{$region.code|escape}"{if $values.rate_zone.region == $region.code} selected="selected"{/if}>{$region.name|escape}</option>
+                    {/foreach}
+                </select>
+                <br><br>
+                <p class="small">{$p->_w('List of pick-up points will be restricted to the selected region.')}</p>
+            {/if}
+        </div>
+    </div>
+
     <div class="field">
         <div class="name">{$p->_w('Currency')}</label>
         </div>
@@ -45,18 +72,18 @@
                     {foreach $values.rate as $rate}
                         <tr class="rate">
                             <td>
-                                <input type="text" value="{$rate.location|escape}" 
-                                    class="refreshable input"
-                                    name="{$namespace|escape}[rate][{$rate@index}][location]"
-                                    placeholder="{$p->_w('Location name')}"
-                                >
+                                <input type="text" value="{$rate.location|escape}"
+                                       class="refreshable input"
+                                       name="{$namespace|escape}[rate][{$rate@index}][location]"
+                                       placeholder="{$p->_w('Location name')}"
+                                       >
                             </td>
                             <td>→</td>
                             <td>
-                                <input type="text" value="{$rate.cost|escape}" 
-                                    name="{$namespace|escape}[rate][{$rate@index}][cost]"
-                                    placeholder="0"
-                                >
+                                <input type="text" value="{$rate.cost|escape}"
+                                       name="{$namespace|escape}[rate][{$rate@index}][cost]"
+                                       placeholder="0"
+                                       >
                             </td>
                             <td>
                                 <a class="delete-rate" href="#">
@@ -67,18 +94,18 @@
                     {foreachelse}
                         <tr class="rate">
                             <td>
-                                <input type="text" value="" 
-                                    class="refreshable input"
-                                    name="{$namespace|escape}[rate][0][location]"
-                                    placeholder="{$p->_w('Location name')}"
-                                >
+                                <input type="text" value=""
+                                       class="refreshable input"
+                                       name="{$namespace|escape}[rate][0][location]"
+                                       placeholder="{$p->_w('Location name')}"
+                                       >
                             </td>
                             <td>→</td>
                             <td>
-                                <input type="text" value="{$rate.cost|escape}" 
-                                    name="{$namespace|escape}[rate][0][cost]"
-                                    placeholder="0"
-                                >
+                                <input type="text" value="{$rate.cost|escape}"
+                                       name="{$namespace|escape}[rate][0][cost]"
+                                       placeholder="0"
+                                       >
                             </td>
                             <td>
                                 <a class="delete-rate" href="#">
@@ -91,5 +118,94 @@
             </table>
         </div>
     </div>
-    {/literal}
 </div>
+
+<script type="text/javascript">
+
+    $(function() {
+        'use strict';
+
+        var container = $('#regionalpickup-settings');
+
+        container.on('click', '.add-rate', function() {
+            var el = $(this);
+            var table = el.parents('table:first');
+            var last = table.find('tr.rate:last');
+            var clone = last.clone();
+
+            clone.find('input').each(function() {
+                var input = $(this);
+
+                // increase index inside input name
+                var name = input.attr('name');
+                input.attr('name', name.replace(/\[rate\]\[(\d+)\]/, function(str, p1) {
+                    return '[rate][' + (parseInt(p1, 10) + 1) + ']';
+                }));
+
+                input.val('');
+            });
+
+            last.after(clone);
+
+            return false;
+        });
+
+        container.on('click', '.delete-rate', function() {
+            var el = $(this);
+            var table = el.parents('table:first');
+            if (table.find('tr.rate').length > 1) {
+                el.parents('tr:first').remove();
+            } else {
+                el.parents('tr:first').find('input').val('');
+            }
+            return false;
+        });
+
+        (function() {
+
+            var name = '{$namespace|escape}[rate_zone][region]';
+            var target = container.find('div.region');
+            var loader = container.find('.region .loading');
+            var old_val = target.find('select, input').val();
+
+            container.find('select[name$="[country]"]').change(function() {
+                loader.show();
+                $.post('{$xhr_url}', { country: this.value }, function(r) {
+                    if (r.data && r.data.options
+                        && r.data.oOrder && r.data.oOrder.length)
+                    {
+                        var select = $(
+                            "<select name='" + name + "'>" +
+                            "<option value=''></option>" +
+                            "</select>"
+                            );
+                        var o, selected = false;
+                        for (var i = 0; i < r.data.oOrder.length; i++) {
+                            o = $('<option></option>').attr(
+                                'value', r.data.oOrder[i]
+                                ).text(
+                                r.data.options[r.data.oOrder[i]]
+                                ).attr(
+                                'disabled', r.data.oOrder[i] === ''
+                                );
+                            if (!selected && old_val === r.data.oOrder[i]) {
+                                o.attr('selected', true);
+                                selected = true;
+                            }
+                            select.append(o);
+                        }
+                        target.html(select);
+                    } else {
+                        target.html("<input name='" + name + "' value='0' type='hidden'>");
+                    }
+                    loader.hide();
+                }, 'json');
+            });
+
+            container.on('change', 'select[name="' + name + '"]', function() {
+                old_val = this.value;
+            });
+        })();
+    });
+
+</script>
