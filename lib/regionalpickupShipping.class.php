@@ -74,11 +74,6 @@ class regionalpickupShipping extends waShipping {
 
         $view->assign('xhr_url', wa()->getAppUrl('webasyst') . '?module=backend&action=regions');
 
-        $app_config = wa()->getConfig();
-        if (method_exists($app_config, 'getCurrencies')) {
-            $view->assign('currencies', $app_config->getCurrencies());
-        }
-
         $namespace = '';
         if (!empty($params['namespace'])) {
             if (is_array($params['namespace'])) {

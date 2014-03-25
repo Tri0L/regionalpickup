@@ -2,15 +2,25 @@
 /**
  * 
  * @author Serge Rodovnichenko <sergerod@gmail.com>
- * @version 1.0
+ * @version 1.1
  */
 return array(
     'rate'     => array(
         'value' => array(
         ),
     ),
+    'rate_zone'        => array(
+        'value' => array(
+            'country' => '',
+            'region'  => '',
+            'city'    => ''
+        ),
+    ),
     'currency' => array(
-        'value' => 'USD',
+        'value' => 'RUB',
+        'title'        => /*_wp*/('Currency'),
+        'description'  => /*_wp*/('Currency in which shipping rate is provided'),
+        'control_type' => waHtmlControl::SELECT.' waShipping::settingCurrencySelect',
     ),
     'prompt_address' =>array(
         'value'        => false,
