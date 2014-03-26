@@ -2,7 +2,7 @@
 /**
  * 
  * @author Serge Rodovnichenko <sergerod@gmail.com>
- * @version 1.1
+ * @version 1.2
  */
 return array(
     'rate'     => array(
@@ -12,8 +12,7 @@ return array(
     'rate_zone'        => array(
         'value' => array(
             'country' => '',
-            'region'  => '',
-            'city'    => ''
+            'region'  => ''
         ),
     ),
     'currency' => array(
