@@ -148,6 +148,25 @@
             }
             return false;
         });
+        
+        $(".value .zebra tbody").sortable({
+            axis: "y",
+            helper: function(e, ui){
+                ui.children().each(function(){
+                    $(this).width($(this).width())
+                });
+                return ui;
+            },
+            update: function(e, ui){
+                $(".value .zebra tbody tr.rate").each(function(index, value){
+                    $("input", this).each(function(i,v){
+                        name = $(this).attr('name');
+                        $(this).attr('name', name.replace(/\[rate\]\[(\d+)\]/, '[rate][' + index +']'));
+                    console.log(index, value, this);
+                    });
+                });
+            }
+        });
 
         (function() {
 
