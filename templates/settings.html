@@ -157,7 +157,6 @@
                     $("input", this).each(function(i,v){
                         name = $(this).attr('name');
                         $(this).attr('name', name.replace(/\[rate\]\[(\d+)\]/, '[rate][' + index +']'));
-                    console.log(index, value, this);
                     });
                 });
             }
