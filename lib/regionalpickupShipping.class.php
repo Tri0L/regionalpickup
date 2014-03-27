@@ -1,14 +1,31 @@
 <?php
-
 /**
- * Модуль расчета доставки в Пункты выдачи заказов с разбивкой по регионам
+ * Модуль расчета доставки в Пункты выдачи заказов с разбивкой по регионам Copyright (C) 2014 Serge Rodovnichenko <sergerod@gmail.com>
  *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the
+ * Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330,
+ * Boston, MA 02111-1307 USA
+ *
+ * @license http://www.gnu.org/licenses/lgpl.html LGPL-2.1
  * @author Serge Rodovnichenko <sergerod@gmail.com>
- * @version 1.0
+ * @version 1.2
  */
 class regionalpickupShipping extends waShipping {
 
-    public function allowedCurrency() {
+    public function allowedCurrency()
+    {
         return $this->currency;
     }
 
@@ -30,19 +47,32 @@ class regionalpickupShipping extends waShipping {
     protected function calculate() {
         $rates = $this->rate;
         $currency = $this->currency;
+        $weight = $this->getTotalWeight();
+        $cost = $this->getTotalPrice();
 
+        $rate_zone = $this->rate_zone;
+        $address = $this->getAddress();
+        
         $deliveries = array();
-        $i = 1;    // start from index 1
-        foreach ($rates as $rate) {
-            $deliveries[$i++] = array(
-                'name' => $rate['location'],
-                'currency' => $currency,
-                'rate' => $rate['cost'],
-                'est_delivery' => ''
-            );
+        
+        if(isset($address['country']) && $address['country'] == $rate_zone['country'] && isset($address['region']) && $address['region'] == $rate_zone['region'])
+        {
+            $i = 1;    // start from index 1
+            foreach ($rates as $rate)
+            {
+                if($this->isAllowedWeight($rate, $weight))
+                {
+                    $deliveries[$i++] = array(
+                        'name' => $rate['location'],
+                        'currency' => $currency,
+                        'rate' => $this->calcCost($rate, $cost),
+                        'est_delivery' => ''
+                    );
+                }
+            }
         }
 
-        return $deliveries;
+        return (empty($deliveries) ? _wp('No suitable pick-up points') : $deliveries);
     }
 
     public function getSettingsHTML($params = array()) {
@@ -52,27 +82,6 @@ class regionalpickupShipping extends waShipping {
         }
 
         $view = wa()->getView();
-
-        if (!$values['rate_zone']['country']) {
-            $l = substr(wa()->getUser()->getLocale(), 0, 2);
-            if ($l == 'ru') {
-                $values['rate_zone']['country'] = 'rus';
-                $values['rate_zone']['region'] = '77';
-                $values['city'] = '';
-            } else {
-                $values['rate_zone']['country'] = 'usa';
-            }
-        }
-
-        $cm = new waCountryModel();
-        $view->assign('countires', $cm->all());
-
-        if (!empty($values['rate_zone']['country'])) {
-            $rm = new waRegionModel();
-            $view->assign('regions', $rm->getByCountry($values['rate_zone']['country']));
-        }
-
-        $view->assign('xhr_url', wa()->getAppUrl('webasyst') . '?module=backend&action=regions');
 
         $namespace = '';
         if (!empty($params['namespace'])) {
@@ -99,7 +108,59 @@ class regionalpickupShipping extends waShipping {
 
     public function requestedAddressFields()
     {
-        return $this->prompt_address ? array() : false;
+        if(!$this->prompt_address)
+            return FALSE;
+        
+        return array('country'=>['cost'=>TRUE, 'required'=>TRUE], 'region'=>['cost'=>TRUE]);
+    }
+
+    /**
+     * Проверяет есть-ли у варианта ограничение по максимальному весу
+     * и, если есть, разрешен-ли указанный вес для этого варианта
+     *
+     * @param array $rate массив с настройками варианта
+     * @param float $weight вес заказа
+     * @return boolean
+     */
+    private function isAllowedWeight($rate, $weight)
+    {
+        if(!isset($rate['maxweight']) || empty($rate['maxweight']))
+            return TRUE;
+
+        $maxweight = floatval(str_replace(',', '.', $rate['maxweight']));
+
+        if ($maxweight == 0)
+            return TRUE;
+
+        if($weight <= $maxweight)
+            return TRUE;
+
+        return FALSE;
+    }
+
+    /**
+     * Расчет стоимости доставки указанного варианта с учетом возможного
+     * бесплатного порога. Если бесплатный порог не указан, пуст или равен 0
+     * то возвращаем стоимость доставки. Иначе 0
+     *
+     * @param array $rate Настройки варианта
+     * @param float $orderCost стоиомсть заказа
+     * @return mixed
+     */
+    private function calcCost($rate, $orderCost)
+    {
+        if(!isset($rate['free']) || empty($rate['free']))
+            return $rate['cost'];
+
+        $freelimit = floatval(str_replace(',', '.', $rate['free']));
+
+        if($freelimit == 0)
+            return $rate['cost'];
+
+        if($orderCost < $freelimit)
+            return $rate['cost'];
+
+        return 0;
     }
 
 }

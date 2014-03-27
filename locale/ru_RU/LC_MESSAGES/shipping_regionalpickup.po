@@ -80,3 +80,15 @@ msgid ""
 msgstr ""
 "Просить покупателя ввести адрес доставки, если он еще не был введен до "
 "расчета стоимости доставки"
+
+#: //wa-plugins/shipping/regionalpickup/templates/settings.html:15
+msgid "Free delivery limit"
+msgstr "Бесплатная доставка"
+
+#: //wa-plugins/shipping/regionalpickup/templates/settings.html:16
+msgid "Maximum weight (kg)"
+msgstr "Максимальный вес (кг.)"
+
+#: //wa-plugins/shipping/regionalpickup/lib/regionalpickupShipping.class.php:78
+msgid "No suitable pick-up points"
+msgstr "Нет подходящих пунктов выдачи"

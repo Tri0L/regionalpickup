@@ -9,11 +9,24 @@ return array(
         'value' => array(
         ),
     ),
-    'rate_zone'        => array(
+    'rate_zone' => array(
         'value' => array(
             'country' => '',
-            'region'  => ''
+            'region' => ''
         ),
+        'title' => 'Pick-up point country and region',
+        'description' => '',
+        'control_type' => waHtmlControl::CUSTOM . ' waShipping::settingRegionZoneControl',
+        'items' => array(
+            'country' => array(
+                'value' => '',
+                'description' => ''
+            ),
+            'region' => array(
+                'value' => '',
+                'description' => ''
+            )
+        )
     ),
     'currency' => array(
         'value' => 'RUB',

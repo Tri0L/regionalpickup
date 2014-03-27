@@ -71,3 +71,15 @@ msgstr ""
 #: //wa-plugins/shipping/regionalpickup/lib/config/settings.php:28
 msgid "Request customer to fill in all address fields in case shipping address was not provided yet"
 msgstr ""
+
+#: //wa-plugins/shipping/regionalpickup/templates/settings.html:15
+msgid "Free delivery limit"
+msgstr ""
+
+#: //wa-plugins/shipping/regionalpickup/templates/settings.html:16
+msgid "Maximum weight (kg)"
+msgstr ""
+
+#: //wa-plugins/shipping/regionalpickup/lib/regionalpickupShipping.class.php:78
+msgid "No suitable pick-up points"
+msgstr ""
