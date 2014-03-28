@@ -100,13 +100,14 @@ class regionalpickupShipping extends waShipping
             }
         }
 
-		$html = wa()->getView()
-			->assign(array(
+        $view = wa()->getView();
+        $view->assign(array(
 				'namespace' => $namespace,
-				'values' => $values
+				'values' => $values,
 				'p' => $this
-			))
-			->fetch($this->path . '/templates/settings.html');
+			));
+        
+		$html = $view->fetch($this->path . '/templates/settings.html');
 
         return $html . parent::getSettingsHTML($params);
     }
