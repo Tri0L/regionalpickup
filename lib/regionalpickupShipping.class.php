@@ -1,6 +1,6 @@
 <?php
 /**
- * Модуль расчета доставки в Пункты выдачи заказов с разбивкой по регионам Copyright (C) 2014 Serge Rodovnichenko <sergerod@gmail.com>
+ * Модуль расчета доставки в Пункты выдачи заказов с разбивкой по регионам.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -20,90 +20,95 @@
  *
  * @license http://www.gnu.org/licenses/lgpl.html LGPL-2.1
  * @author Serge Rodovnichenko <sergerod@gmail.com>
+ * @copyright (C) 2014 Serge Rodovnichenko <sergerod@gmail.com>
  * @version 1.2
  */
-class regionalpickupShipping extends waShipping {
+class regionalpickupShipping extends waShipping
+{
 
     public function allowedCurrency()
     {
         return $this->currency;
     }
 
-    public function allowedAddress() {
-        $rate_zone = $this->rate_zone;
+    public function allowedAddress()
+	{
         $address = array();
-        foreach ($rate_zone as $field => $value) {
+
+        foreach ($this->rate_zone as $field => $value) {
             if (!empty($value)) {
                 $address[$field] = $value;
             }
         }
+
         return array($address);
     }
 
-    public function allowedWeightUnit() {
+    public function allowedWeightUnit()
+	{
         return 'kg';
     }
 
-    protected function calculate() {
-        $rates = $this->rate;
-        $currency = $this->currency;
-        $weight = $this->getTotalWeight();
-        $cost = $this->getTotalPrice();
+	protected function calculate()
+	{
+		$address = $this->getAddress();
 
-        $rate_zone = $this->rate_zone;
-        $address = $this->getAddress();
-        
-        $deliveries = array();
-        
-        if(isset($address['country']) && $address['country'] == $rate_zone['country'] && isset($address['region']) && $address['region'] == $rate_zone['region'])
-        {
-            $i = 1;    // start from index 1
-            foreach ($rates as $rate)
-            {
-                if($this->isAllowedWeight($rate, $weight))
-                {
-                    $deliveries[$i++] = array(
-                        'name' => $rate['location'],
-                        'currency' => $currency,
-                        'rate' => $this->calcCost($rate, $cost),
-                        'est_delivery' => ''
-                    );
-                }
-            }
-        }
+		if(
+			!isset($address['country'])
+			|| $address['country'] === $this->rate_zone['country'] 
+			|| !isset($address['region'])
+			|| $address['region'] === $this->rate_zone['region']
+		)
+		{
+			return _wp('No suitable pick-up points');
+		}
 
-        return (empty($deliveries) ? _wp('No suitable pick-up points') : $deliveries);
+		$rates = $this->rate;
+		$currency = $this->currency;
+		$weight = $this->getTotalWeight();
+		$cost = $this->getTotalPrice();
+		
+		$deliveries = array();
+
+		for ($i = 1; $i < count($rates); $i++) {
+			if ($this->isAllowedWeight($rates[$i], $weight)) {
+				$deliveries[$i] = array(
+					'name' => $rates[$i]['location'],
+					'currency' => $currency,
+					'rate' => $this->calcCost($rates[$i], $cost),
+					'est_delivery' => ''
+				);
+			}
+		}
+
+		return empty($deliveries) ? _wp('No suitable pick-up points') : $deliveries;
     }
 
-    public function getSettingsHTML($params = array()) {
+    public function getSettingsHTML(array $params = array())
+	{
         $values = $this->getSettings();
         if (!empty($params['value'])) {
             $values = array_merge($values, $params['value']);
         }
 
-        $view = wa()->getView();
-
-        $namespace = '';
-        if (!empty($params['namespace'])) {
+		$namespace = '';
+        if ($params['namespace']) {
             if (is_array($params['namespace'])) {
-                $namespace = array_shift($params['namespace']);
-                while (($namspace_chunk = array_shift($params['namespace'])) !== null) {
-                    $namespace .= "[{$namspace_chunk}]";
-                }
+				$namespace = '[' . implode('][', $params['namespace']) . ']';
             } else {
                 $namespace = $params['namespace'];
             }
         }
 
-        $view->assign('namespace', $namespace);
-        $view->assign('values', $values);
-        $view->assign('p', $this);
+		$html = wa()->getView()
+			->assign(array(
+				'namespace' => $namespace,
+				'values' => $values
+				'p' => $this
+			))
+			->fetch($this->path . '/templates/settings.html');
 
-        $html = '';
-        $html .= $view->fetch($this->path . '/templates/settings.html');
-        $html .= parent::getSettingsHTML($params);
-
-        return $html;
+        return $html . parent::getSettingsHTML($params);
     }
 
     public function requestedAddressFields()
@@ -111,7 +116,10 @@ class regionalpickupShipping extends waShipping {
         if(!$this->prompt_address)
             return FALSE;
         
-        return array('country'=>['cost'=>TRUE, 'required'=>TRUE], 'region'=>['cost'=>TRUE]);
+        return array(
+			'country' => array('cost' => TRUE, 'required' => TRUE),
+			'region' => array('cost' => TRUE)
+		);
     }
 
     /**
@@ -162,5 +170,4 @@ class regionalpickupShipping extends waShipping {
 
         return 0;
     }
-
 }
