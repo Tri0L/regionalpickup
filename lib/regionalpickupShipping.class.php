@@ -22,6 +22,16 @@
  * @author Serge Rodovnichenko <sergerod@gmail.com>
  * @copyright (C) 2014 Serge Rodovnichenko <sergerod@gmail.com>
  * @version 1.2
+ *
+ * @property-read string $currency Валюта плагина
+ * @property-read array $rate_zone Массив со страной и регионом, для которых работает плагин
+ * @property-read string $rate_zone['country'] ISO3 Страна
+ * @property-read string $rate_zone['region'] код региона
+ * @property-read array $rate Массив с пунктами выдачи, ценами, лимитами
+ * @property-read string $rate[]['name'] Название ПВЗ
+ * @property-read string $rate[]['cost'] Стоимость доставки. По идее тут float, но чтобы в шаблон передавалось число с точкой в качестве разделителя, то string
+ * @property-read string $rate[]['maxweight'] Максимальный допустимый вес заказа. Про float см. выше
+ * @property-read string $rate[]['free'] Пороговое значение стоимости заказа, выше которого доставка бесплатна. Про float см. выше
  */
 class regionalpickupShipping extends waShipping
 {
@@ -44,11 +54,21 @@ class regionalpickupShipping extends waShipping
         return array($address);
     }
 
+    /**
+     * Единица измерения веса, используемая плагином
+     *
+     * @return string
+     */
     public function allowedWeightUnit()
     {
         return 'kg';
     }
 
+    /**
+     * Расчет стоимости и возможности доставки заказа
+     *
+     * @return string|array Сообщение о недоступности ПВЗ или список ПВЗ с ценами
+     */
     protected function calculate()
     {
         $address = $this->getAddress();
@@ -127,11 +147,11 @@ class regionalpickupShipping extends waShipping
      * Несмотря на название это, видимо, валидатор сохраняемых значений
      * конфигурации. Во всяком случае то, что он возвращает сохраняется
      * в БД.
-     * 
-     * Непонятно, можно-ли как-то отсюда ошибку выбрасывать, разбирать
+     *
+     * Непонятно, можно-ли как-то отсюда ошибку выбрасывать. Разбирать
      * цепочку вызовов лень, поэтому просто превратим в 0 все ошибочные
      * значения
-     * 
+     *
      * @param array $settings
      * @return array
      */
@@ -139,6 +159,7 @@ class regionalpickupShipping extends waShipping
 
         foreach ($settings['rate'] as $index=>$item)
         {
+            $settings['rate'][$index]['cost'] = isset($item['cost']) ? str_replace(',', '.', floatval($item['cost'])) : "0";
             $settings['rate'][$index]['maxweight'] = isset($item['maxweight']) ? str_replace(',', '.', floatval($item['maxweight'])) : "0";
             $settings['rate'][$index]['free'] = isset($item['free']) ? str_replace(',', '.', floatval($item['free'])) : "0";
         }
