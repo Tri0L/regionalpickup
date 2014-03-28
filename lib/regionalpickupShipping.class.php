@@ -124,6 +124,29 @@ class regionalpickupShipping extends waShipping
     }
 
     /**
+     * Несмотря на название это, видимо, валидатор сохраняемых значений
+     * конфигурации. Во всяком случае то, что он возвращает сохраняется
+     * в БД.
+     * 
+     * Непонятно, можно-ли как-то отсюда ошибку выбрасывать, разбирать
+     * цепочку вызовов лень, поэтому просто превратим в 0 все ошибочные
+     * значения
+     * 
+     * @param array $settings
+     * @return array
+     */
+    public function saveSettings($settings = array()) {
+
+        foreach ($settings['rate'] as $index=>$item)
+        {
+            $settings['rate'][$index]['maxweight'] = isset($item['maxweight']) ? str_replace(',', '.', floatval($item['maxweight'])) : "0";
+            $settings['rate'][$index]['free'] = isset($item['free']) ? str_replace(',', '.', floatval($item['free'])) : "0";
+        }
+
+        return parent::saveSettings($settings);
+    }
+
+    /**
      * Проверяет есть-ли у варианта ограничение по максимальному весу
      * и, если есть, разрешен-ли указанный вес для этого варианта
      *
@@ -133,18 +156,7 @@ class regionalpickupShipping extends waShipping
      */
     private function isAllowedWeight($rate, $weight)
     {
-        if(!isset($rate['maxweight']) || empty($rate['maxweight']))
-            return TRUE;
-
-        $maxweight = floatval(str_replace(',', '.', $rate['maxweight']));
-
-        if ($maxweight == 0)
-            return TRUE;
-
-        if($weight <= $maxweight)
-            return TRUE;
-
-        return FALSE;
+        return (!$rate['maxweight'] || $weight <= $rate['maxweight']);
     }
 
     /**
@@ -154,21 +166,10 @@ class regionalpickupShipping extends waShipping
      *
      * @param array $rate Настройки варианта
      * @param float $orderCost стоиомсть заказа
-     * @return mixed
+     * @return int|float стоимость доставки
      */
     private function calcCost($rate, $orderCost)
     {
-        if(!isset($rate['free']) || empty($rate['free']))
-            return $rate['cost'];
-
-        $freelimit = floatval(str_replace(',', '.', $rate['free']));
-
-        if($freelimit == 0)
-            return $rate['cost'];
-
-        if($orderCost < $freelimit)
-            return $rate['cost'];
-
-        return 0;
+        return !$rate['free'] || $orderCost < $rate['free'] ? 0 : $rate['cost'];
     }
 }
