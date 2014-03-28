@@ -32,7 +32,7 @@ class regionalpickupShipping extends waShipping
     }
 
     public function allowedAddress()
-	{
+    {
         $address = array();
 
         foreach ($this->rate_zone as $field => $value) {
@@ -45,56 +45,56 @@ class regionalpickupShipping extends waShipping
     }
 
     public function allowedWeightUnit()
-	{
+    {
         return 'kg';
     }
 
-	protected function calculate()
-	{
-		$address = $this->getAddress();
+    protected function calculate()
+    {
+        $address = $this->getAddress();
 
-		if(
-			!isset($address['country'])
-			|| $address['country'] !== $this->rate_zone['country'] 
-			|| !isset($address['region'])
-			|| $address['region'] !== $this->rate_zone['region']
-		)
-		{
-			return _wp('No suitable pick-up points');
-		}
+        if(
+            !isset($address['country'])
+            || $address['country'] !== $this->rate_zone['country']
+            || !isset($address['region'])
+            || $address['region'] !== $this->rate_zone['region']
+        )
+        {
+            return _wp('No suitable pick-up points');
+        }
 
-		$rates = $this->rate;
-		$currency = $this->currency;
-		$weight = $this->getTotalWeight();
-		$cost = $this->getTotalPrice();
-		
-		$deliveries = array();
+        $rates = $this->rate;
+        $currency = $this->currency;
+        $weight = $this->getTotalWeight();
+        $cost = $this->getTotalPrice();
 
-		for ($i = 1; $i < count($rates); $i++) {
-			if ($this->isAllowedWeight($rates[$i], $weight)) {
-				$deliveries[$i] = array(
-					'name' => $rates[$i]['location'],
-					'currency' => $currency,
-					'rate' => $this->calcCost($rates[$i], $cost),
-					'est_delivery' => ''
-				);
-			}
-		}
+        $deliveries = array();
 
-		return empty($deliveries) ? _wp('No suitable pick-up points') : $deliveries;
+        for ($i = 1; $i < count($rates); $i++) {
+            if ($this->isAllowedWeight($rates[$i], $weight)) {
+                $deliveries[$i] = array(
+                    'name' => $rates[$i]['location'],
+                    'currency' => $currency,
+                    'rate' => $this->calcCost($rates[$i], $cost),
+                    'est_delivery' => ''
+                );
+            }
+        }
+
+        return empty($deliveries) ? _wp('No suitable pick-up points') : $deliveries;
     }
 
     public function getSettingsHTML(array $params = array())
-	{
+    {
         $values = $this->getSettings();
         if (!empty($params['value'])) {
             $values = array_merge($values, $params['value']);
         }
 
-		$namespace = '';
+        $namespace = '';
         if ($params['namespace']) {
             if (is_array($params['namespace'])) {
-				$namespace = '[' . implode('][', $params['namespace']) . ']';
+                $namespace = '[' . implode('][', $params['namespace']) . ']';
             } else {
                 $namespace = $params['namespace'];
             }
@@ -102,12 +102,12 @@ class regionalpickupShipping extends waShipping
 
         $view = wa()->getView();
         $view->assign(array(
-				'namespace' => $namespace,
-				'values' => $values,
-				'p' => $this
-			));
-        
-		$html = $view->fetch($this->path . '/templates/settings.html');
+                'namespace' => $namespace,
+                'values' => $values,
+                'p' => $this
+            ));
+
+        $html = $view->fetch($this->path . '/templates/settings.html');
 
         return $html . parent::getSettingsHTML($params);
     }
@@ -116,11 +116,11 @@ class regionalpickupShipping extends waShipping
     {
         if(!$this->prompt_address)
             return FALSE;
-        
+
         return array(
-			'country' => array('cost' => TRUE, 'required' => TRUE),
-			'region' => array('cost' => TRUE)
-		);
+            'country' => array('cost' => TRUE, 'required' => TRUE),
+            'region' => array('cost' => TRUE)
+        );
     }
 
     /**
