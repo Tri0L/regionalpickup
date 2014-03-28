@@ -55,9 +55,9 @@ class regionalpickupShipping extends waShipping
 
 		if(
 			!isset($address['country'])
-			|| $address['country'] === $this->rate_zone['country'] 
+			|| $address['country'] !== $this->rate_zone['country'] 
 			|| !isset($address['region'])
-			|| $address['region'] === $this->rate_zone['region']
+			|| $address['region'] !== $this->rate_zone['region']
 		)
 		{
 			return _wp('No suitable pick-up points');
