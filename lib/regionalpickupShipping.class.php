@@ -106,18 +106,23 @@ class regionalpickupShipping extends waShipping
 
     public function getSettingsHTML(array $params = array())
     {
+        $default_rate_values = array('free'=>"0", "maxweight"=>"0", "cost"=>"0");
+
         $values = $this->getSettings();
+
+        if(isset($values["rate"])) {
+            foreach ($values["rate"] as $index => $item) {
+                $values["rate"][$index] = array_merge($default_rate_values, $item);
+            }
+        }
+
         if (!empty($params['value'])) {
             $values = array_merge($values, $params['value']);
         }
 
         $namespace = '';
-        if ($params['namespace']) {
-            if (is_array($params['namespace'])) {
-                $namespace = '[' . implode('][', $params['namespace']) . ']';
-            } else {
-                $namespace = $params['namespace'];
-            }
+        if($params['namespace']) {
+            $namespace = is_array($params['namespace']) ? '[' . implode('][', $params['namespace']) . ']' : $params['namespace'];
         }
 
         $view = wa()->getView();
