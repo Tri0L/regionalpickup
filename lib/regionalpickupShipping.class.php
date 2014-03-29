@@ -177,7 +177,7 @@ class regionalpickupShipping extends waShipping
 
         if(isset($values["rate"])) {
             foreach ($values["rate"] as $index => $item) {
-                $values["rate"][$index] = array_merge($default_rate_values, $item);
+                $values["rate"][$index] = array_merge($default_rate_values, array('code'=>$index), $item);
             }
         }
 
