@@ -15,6 +15,7 @@
 Распаковать содержимое плагина в папку /wa-plugins/shipping
 
 ## Авторы
-* Сергей Родовниченко https://github.com/SergeR
+* Сергей Родовниченко (SergeR) https://github.com/SergeR
+* Anton (WinterSilence) https://github.com/WinterSilence
 
 
