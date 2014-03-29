@@ -28,10 +28,11 @@
  * @property-read string $rate_zone['country'] ISO3 Страна
  * @property-read string $rate_zone['region'] код региона
  * @property-read array $rate Массив с пунктами выдачи, ценами, лимитами
- * @property-read string $rate[]['location'] Название ПВЗ
- * @property-read string $rate[]['cost'] Стоимость доставки. По идее тут float, но чтобы в шаблон передавалось число с точкой в качестве разделителя, то string
- * @property-read string $rate[]['maxweight'] Максимальный допустимый вес заказа. Про float см. выше
- * @property-read string $rate[]['free'] Пороговое значение стоимости заказа, выше которого доставка бесплатна. Про float см. выше
+ * @property-read array $rate[$code] массив настроек одного ПВЗ с кодом $code. $code не может быть 0 или "0" или пустым
+ * @property-read string $rate[$code]['location'] Название ПВЗ
+ * @property-read string $rate[$code]['cost'] Стоимость доставки. По идее тут float, но чтобы в шаблон передавалось число с точкой в качестве разделителя, то string
+ * @property-read string $rate[$code]['maxweight'] Максимальный допустимый вес заказа. Про float см. выше
+ * @property-read string $rate[$code]['free'] Пороговое значение стоимости заказа, выше которого доставка бесплатна. Про float см. выше
  */
 class regionalpickupShipping extends waShipping
 {
@@ -89,13 +90,14 @@ class regionalpickupShipping extends waShipping
         $cost = $this->getTotalPrice();
 
         $deliveries = array();
-
-        for ($i = 1; $i < count($rates); $i++) {
-            if ($this->isAllowedWeight($rates[$i], $weight)) {
-                $deliveries[$i] = array(
-                    'name' => $rates[$i]['location'],
+        
+        foreach ($rates as $code => $rate) {
+            if($this->isAllowedWeight($rate, $weight)) {
+                /** @todo для ясности можно и отдельный метод сделать, который будет выдавать нужный формат массива */
+                $deliveries[$code] = array(
+                    'name' => $rate['location'],
                     'currency' => $currency,
-                    'rate' => $this->calcCost($rates[$i], $cost),
+                    'rate' => $this->calcCost($rate, $cost),
                     'est_delivery' => ''
                 );
             }
@@ -148,7 +150,7 @@ class regionalpickupShipping extends waShipping
      * Непонятно, можно-ли как-то отсюда ошибку выбрасывать. Разбирать
      * цепочку вызовов лень, поэтому просто превратим в 0 все ошибочные
      * значения
-     *
+     * 
      * @param array $settings
      * @return array
      */
