@@ -28,7 +28,7 @@
  * @property-read string $rate_zone['country'] ISO3 Страна
  * @property-read string $rate_zone['region'] код региона
  * @property-read array $rate Массив с пунктами выдачи, ценами, лимитами
- * @property-read string $rate[]['name'] Название ПВЗ
+ * @property-read string $rate[]['location'] Название ПВЗ
  * @property-read string $rate[]['cost'] Стоимость доставки. По идее тут float, но чтобы в шаблон передавалось число с точкой в качестве разделителя, то string
  * @property-read string $rate[]['maxweight'] Максимальный допустимый вес заказа. Про float см. выше
  * @property-read string $rate[]['free'] Пороговое значение стоимости заказа, выше которого доставка бесплатна. Про float см. выше
@@ -156,9 +156,13 @@ class regionalpickupShipping extends waShipping
 
         foreach ($settings['rate'] as $index=>$item)
         {
-            $settings['rate'][$index]['cost'] = isset($item['cost']) ? str_replace(',', '.', floatval($item['cost'])) : "0";
-            $settings['rate'][$index]['maxweight'] = isset($item['maxweight']) ? str_replace(',', '.', floatval($item['maxweight'])) : "0";
-            $settings['rate'][$index]['free'] = isset($item['free']) ? str_replace(',', '.', floatval($item['free'])) : "0";
+            if(!isset($item['location']) || empty($item['location'])) {
+                unset($settings['rate'][$index]);
+            } else {
+                $settings['rate'][$index]['cost'] = isset($item['cost']) ? str_replace(',', '.', floatval($item['cost'])) : "0";
+                $settings['rate'][$index]['maxweight'] = isset($item['maxweight']) ? str_replace(',', '.', floatval($item['maxweight'])) : "0";
+                $settings['rate'][$index]['free'] = isset($item['free']) ? str_replace(',', '.', floatval($item['free'])) : "0";
+            }
         }
 
         return parent::saveSettings($settings);
