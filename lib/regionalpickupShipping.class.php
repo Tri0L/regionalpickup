@@ -106,15 +106,7 @@ class regionalpickupShipping extends waShipping
 
     public function getSettingsHTML(array $params = array())
     {
-        $default_rate_values = array('free'=>"0", "maxweight"=>"0", "cost"=>"0");
-
         $values = $this->getSettings();
-
-        if(isset($values["rate"])) {
-            foreach ($values["rate"] as $index => $item) {
-                $values["rate"][$index] = array_merge($default_rate_values, $item);
-            }
-        }
 
         if (!empty($params['value'])) {
             $values = array_merge($values, $params['value']);
@@ -170,6 +162,20 @@ class regionalpickupShipping extends waShipping
         }
 
         return parent::saveSettings($settings);
+    }
+
+    public function getSettings($name = null) {
+        $values = parent::getSettings($name);
+
+        $default_rate_values = array('free'=>"0", "maxweight"=>"0", "cost"=>"0");
+
+        if(isset($values["rate"])) {
+            foreach ($values["rate"] as $index => $item) {
+                $values["rate"][$index] = array_merge($default_rate_values, $item);
+            }
+        }
+
+        return $values;
     }
 
     /**
