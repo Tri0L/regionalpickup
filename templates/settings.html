@@ -27,31 +27,31 @@
                     </tr>
                 </tfoot>
                 <tbody>
-                    {foreach $values.rate as $rate}
+                    {foreach $values.rate as $rate_code=>$rate}
                         <tr class="rate">
                             <td>
                                 <input type="text" value="{$rate.location|escape}"
                                        class="refreshable input"
-                                       name="{$namespace|escape}[rate][{$rate@index}][location]"
+                                       name="{$namespace|escape}[rate][{$rate_code}][location]"
                                        placeholder="{$p->_w('Location name')}"
                                        >
                             </td>
                             <td>→</td>
                             <td>
                                 <input type="text" value="{$rate.cost|escape}"
-                                       name="{$namespace|escape}[rate][{$rate@index}][cost]"
+                                       name="{$namespace|escape}[rate][{$rate_code}][cost]"
                                        placeholder="0"
                                        >
                             </td>
                             <td>
                                 <input type="text" value="{$rate.free|escape}"
-                                       name="{$namespace|escape}[rate][{$rate@index}][free]"
+                                       name="{$namespace|escape}[rate][{$rate_code}][free]"
                                        placeholder="0"
                                        >
                             </td>
                             <td>
                                 <input type="text" value="{$rate.maxweight|escape}"
-                                       name="{$namespace|escape}[rate][{$rate@index}][maxweight]"
+                                       name="{$namespace|escape}[rate][{$rate_code}][maxweight]"
                                        placeholder="0"
                                        >
                             </td>
@@ -156,7 +156,7 @@
                 $(".value .zebra tbody tr.rate").each(function(index, value){
                     $("input", this).each(function(i,v){
                         name = $(this).attr('name');
-                        $(this).attr('name', name.replace(/\[rate\]\[(\d+)\]/, '[rate][' + index +']'));
+                        $(this).attr('name', name.replace(/\[rate\]\[(\d+)\]/, '[rate][' + (parseInt(index, 10) + 1) +']'));
                     });
                 });
             }
