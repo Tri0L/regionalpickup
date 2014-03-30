@@ -9,6 +9,7 @@
             <table class="zebra">
                 <thead>
                     <tr>
+                        <th class="min-width">&nbsp;</th>
                         <th>{$p->_w('Code')}</th>
                         <th>{$p->_w('Location name')}</th>
                         <th>&nbsp;</th>
@@ -30,6 +31,9 @@
                 <tbody>
                     {foreach $values.rate as $rate_code=>$rate}
                         <tr class="rate">
+                            <td class="min-width">
+                                <i class="icon16 sort"></i>
+                            </td>
                             <td>
                                 <input type="text" value="{$rate_code}"
                                        class="input pickpointcode"
@@ -72,6 +76,17 @@
                         </tr>
                     {foreachelse}
                         <tr class="rate">
+                            <td class="min-width">
+                                <i class="icon16 sort"></i>
+                            </td>
+                            <td>
+                                <input type="text" value="{$rate_code}"
+                                       class="input pickpointcode"
+                                       required
+                                       placeholder="{$p->_w('Code')}"
+                                       name="{$namespace|escape}[rate][{$rate_code}][code]"
+                                       >
+                            </td>
                             <td>
                                 <input type="text" value=""
                                        class="refreshable input"
