@@ -120,6 +120,8 @@ class regionalpickupShipping extends waShipping
         }
 
         $view = wa()->getView();
+        // @link http://smarty.net/docs/en/variable.escape.html
+        $view->escape_html = true;
         $view->assign(array(
                 'namespace' => $namespace,
                 'values' => $values,

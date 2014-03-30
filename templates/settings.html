@@ -39,32 +39,32 @@
                                        class="input pickpointcode"
                                        required
                                        placeholder="{$p->_w('Code')}"
-                                       name="{$namespace|escape}[rate][{$rate_code}][code]"
+                                       name="{$namespace}[rate][{$rate_code}][code]"
                                        >
                             </td>
                             <td>
-                                <input type="text" value="{$rate.location|escape}"
+                                <input type="text" value="{$rate.location}"
                                        class="refreshable input"
-                                       name="{$namespace|escape}[rate][{$rate_code}][location]"
+                                       name="{$namespace}[rate][{$rate_code}][location]"
                                        placeholder="{$p->_w('Location name')}"
                                        >
                             </td>
                             <td>→</td>
                             <td>
-                                <input type="text" value="{$rate.cost|escape}"
-                                       name="{$namespace|escape}[rate][{$rate_code}][cost]"
+                                <input type="text" value="{$rate.cost}"
+                                       name="{$namespace}[rate][{$rate_code}][cost]"
                                        placeholder="0"
                                        >
                             </td>
                             <td>
-                                <input type="text" value="{$rate.free|escape}"
-                                       name="{$namespace|escape}[rate][{$rate_code}][free]"
+                                <input type="text" value="{$rate.free}"
+                                       name="{$namespace}[rate][{$rate_code}][free]"
                                        placeholder="0"
                                        >
                             </td>
                             <td>
-                                <input type="text" value="{$rate.maxweight|escape}"
-                                       name="{$namespace|escape}[rate][{$rate_code}][maxweight]"
+                                <input type="text" value="{$rate.maxweight}"
+                                       name="{$namespace}[rate][{$rate_code}][maxweight]"
                                        placeholder="0"
                                        >
                             </td>
@@ -84,33 +84,33 @@
                                        class="input pickpointcode"
                                        required
                                        placeholder="{$p->_w('Code')}"
-                                       name="{$namespace|escape}[rate][{$rate_code}][code]"
+                                       name="{$namespace}[rate][{$rate_code}][code]"
                                        >
                             </td>
                             <td>
                                 <input type="text" value=""
                                        class="refreshable input"
-                                       name="{$namespace|escape}[rate][0][location]"
+                                       name="{$namespace}[rate][0][location]"
                                        placeholder="{$p->_w('Location name')}"
                                        >
                             </td>
                             <td>→</td>
                             <td>
-                                <input type="text" value="{$rate.cost|escape}"
-                                       name="{$namespace|escape}[rate][0][cost]"
+                                <input type="text" value="{$rate.cost}"
+                                       name="{$namespace}[rate][0][cost]"
                                        placeholder="0"
                                        >
                             </td>
                             <td>
-                                <input type="text" value="{$rate.free|escape}"
-                                       name="{$namespace|escape}[rate][0][free]"
+                                <input type="text" value="{$rate.free}"
+                                       name="{$namespace}[rate][0][free]"
                                        placeholder="0"
                                        style="width: 5em"
                                        >
                             </td>
                             <td>
-                                <input type="text" value="{$rate.maxweight|escape}"
-                                       name="{$namespace|escape}[rate][0][maxweight]"
+                                <input type="text" value="{$rate.maxweight}"
+                                       name="{$namespace}[rate][0][maxweight]"
                                        placeholder="0"
                                        >
                             </td>
@@ -142,7 +142,7 @@
 
             clone.find('input').each(function() {
                 var input = $(this);
-                
+
                 // Найдем максимальный целочисленный rate_code и увеличим на 1
                 // это будет какой-никакой уникальный ID ПВЗ. Пересекаться с
                 // предыдущими значениями будет только в случае переименования
@@ -156,12 +156,12 @@
                         rate_code = rate_code > el_code ? rate_code : el_code;
                     }
                 });
-                
+
                 rate_code++;
 
                 // increase index inside input name
                 var name = input.attr('name');
-                
+
                 input.attr('name', name.replace(/\[rate\]\[(.+?)\]/, '[rate][' + rate_code + ']'));
 
                 input.val((input.hasClass('pickpointcode') ? rate_code : ''));
@@ -171,7 +171,7 @@
 
             return false;
         });
-        
+
         container.on('change', '.pickpointcode', function(){
             var row = $(this).closest('tr');
             var new_rate_code = $(this).val();
