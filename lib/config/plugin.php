@@ -1,8 +1,8 @@
 <?php
 /**
- * 
+ *
  * @author Serge Rodovnichenko <sergerod@gmail.com>
- * @version 1.2
+ * @version 1.3
  */
 
 return array(
