@@ -210,6 +210,6 @@ class regionalpickupShipping extends waShipping
      */
     private function calcCost($rate, $orderCost)
     {
-        return !$rate['free'] || $orderCost < $rate['free'] ? 0 : $rate['cost'];
+        return (!$rate['free'] || $orderCost < $rate['free']) ? $rate['cost'] : 0;
     }
 }
