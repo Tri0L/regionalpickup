@@ -21,7 +21,7 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL-2.1
  * @author Serge Rodovnichenko <sergerod@gmail.com>
  * @copyright (C) 2014 Serge Rodovnichenko <sergerod@gmail.com>
- * @version 1.2
+ * @version 1.3
  *
  * @property-read string $currency Валюта плагина
  * @property-read array $rate_zone Массив со страной и регионом, для которых работает плагин
