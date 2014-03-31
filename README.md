@@ -18,4 +18,6 @@
 * Сергей Родовниченко (SergeR) https://github.com/SergeR
 * Anton (WinterSilence) https://github.com/WinterSilence
 
+## Благодарности
+Компании Webasyst за ценные советы по улучшению и расширению функционала
 
