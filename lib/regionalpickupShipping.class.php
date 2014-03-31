@@ -108,7 +108,7 @@ class regionalpickupShipping extends waShipping
         return empty($deliveries) ? _wp('No suitable pick-up points') : $deliveries;
     }
 
-    public function getSettingsHTML(array $params = array())
+    public function getSettingsHTML($params = array())
     {
         $values = $this->getSettings();
 
