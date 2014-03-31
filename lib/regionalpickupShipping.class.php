@@ -33,6 +33,8 @@
  * @property-read string $rate[$code]['cost'] Стоимость доставки. По идее тут float, но чтобы в шаблон передавалось число с точкой в качестве разделителя, то string
  * @property-read string $rate[$code]['maxweight'] Максимальный допустимый вес заказа. Про float см. выше
  * @property-read string $rate[$code]['free'] Пороговое значение стоимости заказа, выше которого доставка бесплатна. Про float см. выше
+ *
+ * @todo С версии 1.4 $rate[$code]['location'] переименовать в $rate[$code]['name']. В location будет location :) https://github.com/SergeR/regionalpickup/issues?milestone=2
  */
 class regionalpickupShipping extends waShipping
 {
@@ -90,7 +92,7 @@ class regionalpickupShipping extends waShipping
         $cost = $this->getTotalPrice();
 
         $deliveries = array();
-        
+
         foreach ($rates as $code => $rate) {
             if($this->isAllowedWeight($rate, $weight)) {
                 /** @todo для ясности можно и отдельный метод сделать, который будет выдавать нужный формат массива */
@@ -152,7 +154,7 @@ class regionalpickupShipping extends waShipping
      * Непонятно, можно-ли как-то отсюда ошибку выбрасывать. Разбирать
      * цепочку вызовов лень, поэтому просто превратим в 0 все ошибочные
      * значения
-     * 
+     *
      * @param array $settings
      * @return array
      */
