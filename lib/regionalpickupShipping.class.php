@@ -122,8 +122,10 @@ class regionalpickupShipping extends waShipping
         }
 
         $view = wa()->getView();
-        // @link http://smarty.net/docs/en/variable.escape.html
-        $view->escape_html = true;
+
+        $autoescape = $view->autoescape();
+        $view->autoescape(TRUE);
+
         $view->assign(array(
                 'namespace' => $namespace,
                 'values' => $values,
@@ -131,6 +133,8 @@ class regionalpickupShipping extends waShipping
             ));
 
         $html = $view->fetch($this->path . '/templates/settings.html');
+
+        $view->autoescape($autoescape);
 
         return $html . parent::getSettingsHTML($params);
     }
