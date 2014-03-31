@@ -92,3 +92,13 @@ msgstr "Максимальный вес (кг.)"
 #: //wa-plugins/shipping/regionalpickup/lib/regionalpickupShipping.class.php:78
 msgid "No suitable pick-up points"
 msgstr "Нет подходящих пунктов выдачи"
+
+#: //wa-plugins/shipping/regionalpickup/templates/settings.html:13
+#: //wa-plugins/shipping/regionalpickup/templates/settings.html:41
+#: //wa-plugins/shipping/regionalpickup/templates/settings.html:86
+msgid "Code"
+msgstr "Код ПВЗ"
+
+#: //wa-plugins/shipping/regionalpickup/lib/regionalpickupShipping.class.php:186
+msgid "Pick-up point name cannot be empty"
+msgstr "Название ПВЗ не может быть пустым"

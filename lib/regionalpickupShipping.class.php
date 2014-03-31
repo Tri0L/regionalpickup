@@ -83,7 +83,7 @@ class regionalpickupShipping extends waShipping
             || $address['region'] !== $this->rate_zone['region']
         )
         {
-            return _wp('No suitable pick-up points');
+            return _w('No suitable pick-up points');
         }
 
         $rates = $this->rate;
@@ -105,7 +105,7 @@ class regionalpickupShipping extends waShipping
             }
         }
 
-        return empty($deliveries) ? _wp('No suitable pick-up points') : $deliveries;
+        return empty($deliveries) ? _w('No suitable pick-up points') : $deliveries;
     }
 
     public function getSettingsHTML($params = array())
@@ -155,24 +155,22 @@ class regionalpickupShipping extends waShipping
      * конфигурации. Во всяком случае то, что он возвращает сохраняется
      * в БД.
      *
-     * Непонятно, можно-ли как-то отсюда ошибку выбрасывать. Разбирать
-     * цепочку вызовов лень, поэтому просто превратим в 0 все ошибочные
-     * значения
+     * Название ПВЗ не можеь быть пустым. Потомушта.
      *
      * @param array $settings
      * @return array
+     * @throws waException Если данные не прошли проверку
      */
     public function saveSettings($settings = array()) {
 
         foreach ($settings['rate'] as $index=>$item)
         {
-            if(!isset($item['location']) || empty($item['location'])) {
-                unset($settings['rate'][$index]);
-            } else {
-                $settings['rate'][$index]['cost'] = isset($item['cost']) ? str_replace(',', '.', floatval($item['cost'])) : "0";
-                $settings['rate'][$index]['maxweight'] = isset($item['maxweight']) ? str_replace(',', '.', floatval($item['maxweight'])) : "0";
-                $settings['rate'][$index]['free'] = isset($item['free']) ? str_replace(',', '.', floatval($item['free'])) : "0";
-            }
+            if(!isset($item['location']) || empty($item['location']))
+                throw new waException(_w('Pick-up point name cannot be empty'));
+
+            $settings['rate'][$index]['cost'] = isset($item['cost']) ? str_replace(',', '.', floatval($item['cost'])) : "0";
+            $settings['rate'][$index]['maxweight'] = isset($item['maxweight']) ? str_replace(',', '.', floatval($item['maxweight'])) : "0";
+            $settings['rate'][$index]['free'] = isset($item['free']) ? str_replace(',', '.', floatval($item['free'])) : "0";
         }
 
         return parent::saveSettings($settings);
