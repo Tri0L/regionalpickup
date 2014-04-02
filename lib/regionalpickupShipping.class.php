@@ -46,15 +46,7 @@ class regionalpickupShipping extends waShipping
 
     public function allowedAddress()
     {
-        $address = array();
-
-        foreach ($this->rate_zone as $field => $value) {
-            if (!empty($value)) {
-                $address[$field] = $value;
-            }
-        }
-
-        return array($address);
+        return array(array_filter($this->rate_zone));
     }
 
     /**
@@ -86,19 +78,17 @@ class regionalpickupShipping extends waShipping
             return _w('No suitable pick-up points');
         }
 
-        $rates = $this->rate;
-        $currency = $this->currency;
         $weight = $this->getTotalWeight();
         $cost = $this->getTotalPrice();
 
         $deliveries = array();
 
-        foreach ($rates as $code => $rate) {
+        foreach ($this->rate as $code => $rate) {
             if($this->isAllowedWeight($rate, $weight)) {
                 /** @todo для ясности можно и отдельный метод сделать, который будет выдавать нужный формат массива */
                 $deliveries[$code] = array(
                     'name' => $rate['location'],
-                    'currency' => $currency,
+                    'currency' => $this->currency,
                     'rate' => $this->calcCost($rate, $cost),
                     'est_delivery' => ''
                 );
