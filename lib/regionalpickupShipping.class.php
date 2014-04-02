@@ -166,19 +166,21 @@ class regionalpickupShipping extends waShipping
         return parent::saveSettings($settings);
     }
 
-    public function getSettings($name = null) {
-        $values = parent::getSettings($name);
+	public function getSettings($name = null)
+	{
+		$settings = (array)parent::getSettings($name);
+		
+		if (isset($settings['rate'])) {
+			foreach ((array)$settings['rate'] as $index => $item) {
+				$settings['rate'][$index] = array_merge(
+					array('code' => $index, 'free'=> '0.0', 'maxweight' => '0.0', 'cost' => '0.0'),
+					(array)$item
+				);
+			}
+		}
 
-        $default_rate_values = array('free'=>"0", "maxweight"=>"0", "cost"=>"0");
-
-        if(isset($values["rate"])) {
-            foreach ($values["rate"] as $index => $item) {
-                $values["rate"][$index] = array_merge($default_rate_values, array('code'=>$index), $item);
-            }
-        }
-
-        return $values;
-    }
+		return $settings;
+	}
 
     /**
      * Проверяет есть-ли у варианта ограничение по максимальному весу
