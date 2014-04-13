@@ -168,7 +168,7 @@ class regionalpickupShipping extends waShipping
 
     public function getSettings($name = null)
     {
-        $settings = (array)parent::getSettings($name);
+        $settings = parent::getSettings($name);
 
         if (isset($settings['rate'])) {
             foreach ((array)$settings['rate'] as $index => $item) {
