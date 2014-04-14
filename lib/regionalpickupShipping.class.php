@@ -140,6 +140,8 @@ class regionalpickupShipping extends waShipping
      * в БД.
      *
      * Название ПВЗ не можеь быть пустым. Потомушта.
+     * 
+     * @todo Проверять, чтоб страна и регион были указаны
      *
      * @param array $settings
      * @return array
