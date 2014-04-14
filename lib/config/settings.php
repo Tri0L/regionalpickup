@@ -15,8 +15,8 @@ return array(
     ),
     'rate_zone' => array(
         'value' => array(
-            'country' => '',
-            'region' => ''
+            'country' => 'rus',
+            'region' => '77'
         ),
         'title' => 'Pick-up point country and region',
         'description' => '',
