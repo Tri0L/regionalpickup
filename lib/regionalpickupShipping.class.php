@@ -131,13 +131,7 @@ class regionalpickupShipping extends waShipping
 
     public function requestedAddressFields()
     {
-        if(!$this->prompt_address)
-            return FALSE;
-
-        return array(
-            'country' => array('cost' => TRUE, 'required' => TRUE),
-            'region' => array('cost' => TRUE)
-        );
+        return FALSE;
     }
 
     /**
