@@ -167,11 +167,23 @@ class regionalpickupShipping extends waShipping
         $settings = parent::getSettings($name);
 
         if (isset($settings['rate'])) {
-            foreach ((array)$settings['rate'] as $index => $item) {
-                $settings['rate'][$index] = array_merge(
-                    array('code' => $index, 'free'=> '0.0', 'maxweight' => '0.0', 'cost' => '0.0'),
-                    (array)$item
-                );
+            if(!is_array($settings['rate'])) {
+                
+                waLog::log("Settings '$name'", 'regionalpickup-errors.log');
+                waLog::log("Settings " . json_encode($settings), 'regionalpickup-errors.log');
+                waLog::log("Settings[rate] not an array. It is " . gettype($settings['rate']) . " and contains '" . json_encode($settings['rate']) . "'", 'regionalpickup-errors.log');
+                
+            } else {
+                foreach ($settings['rate'] as $index => $item) {
+                    if(!is_array($item)) {
+                        waLog::log("Settings[rate][item] not an array. It is " . gettype($item) . " and contains '" . json_encode($item) . "'", 'regionalpickup-errors.log');
+                    } else {
+                        $settings['rate'][$index] = array_merge(
+                            array('code' => $index, 'free'=> '0.0', 'maxweight' => '0.0', 'cost' => '0.0'),
+                            (array)$item
+                        );
+                    }
+                }
             }
         }
 
